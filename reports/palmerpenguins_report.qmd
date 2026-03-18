@@ -3,7 +3,7 @@ title: "Analysis of penguins measurements from the palmerpenguins dataset"
 author: "Olivia Angelin-Bonnet"
 date: today
 format:
-  docx:
+  typst:
     number-sections: true
 ---
 

@@ -1,23 +1,29 @@
 #' Read and clean data
-#' 
+#'
 #' Reads in the penguins data, renames and selects relevant columns. The
-#' following transformations are applied to the data: 
+#' following transformations are applied to the data:
 #' * only keep species common name
 #' * extract observation year
 #' * remove rows with missing values
-#' 
+#'
 #' @param file Character, path to the penguins data .csv file.
 #' @returns A tibble.
 read_data <- function(file) {
-  readr::read_csv(file, show_col_types = FALSE) |> 
-    janitor::clean_names() |> 
+  readr::read_csv(file, show_col_types = FALSE) |>
+    janitor::clean_names() |>
     assertr::verify(
       assertr::has_all_names(
-        "species", "island", "date_egg", "sex", "body_mass_g", 
-        "culmen_length_mm", "culmen_depth_mm", "flipper_length_mm"
+        "species",
+        "island",
+        "date_egg",
+        "sex",
+        "body_mass_g",
+        "culmen_length_mm",
+        "culmen_depth_mm",
+        "flipper_length_mm"
       )
-    ) |> 
-    assertr::assert(rlang::is_integerish, body_mass_g) |> 
+    ) |>
+    assertr::assert(rlang::is_integerish, body_mass_g) |>
     dplyr::mutate(
       species = stringr::word(species, 1),
       year = lubridate::year(date_egg),
@@ -25,7 +31,7 @@ read_data <- function(file) {
       year = as.integer(year),
       body_mass_g = as.integer(body_mass_g),
       dplyr::across(dplyr::where(is.character), as.factor)
-    ) |> 
+    ) |>
     dplyr::select(
       species,
       island,
@@ -35,8 +41,8 @@ read_data <- function(file) {
       bill_length_mm = culmen_length_mm,
       bill_depth_mm = culmen_depth_mm,
       flipper_length_mm
-    ) |> 
-    tidyr::drop_na() |> 
+    ) |>
+    tidyr::drop_na() |>
     assertr::verify(flipper_length_mm > 0)
 }
 
@@ -49,7 +55,7 @@ read_data <- function(file) {
 #' @param yvar Unquoted expression, name of the variable in `df` to plot.
 #' @returns a ggplot.
 violin_plot <- function(df, yvar) {
-  df |> 
+  df |>
     ggplot2::ggplot(
       ggplot2::aes(x = species, colour = sex, fill = sex, y = {{ yvar }})
     ) +
@@ -68,16 +74,16 @@ violin_plot <- function(df, yvar) {
 #' @param df Tibble, penguins data.
 #' @returns a ggplot.
 plot_bill_length_depth <- function(df) {
-  df |> 
+  df |>
     ggplot2::ggplot(
       ggplot2::aes(
-        x = bill_length_mm, 
-        y = bill_depth_mm, 
-        colour = species, 
+        x = bill_length_mm,
+        y = bill_depth_mm,
+        colour = species,
         shape = sex
-        )
+      )
     ) +
     ggplot2::geom_point() +
-    ggplot2::scale_colour_brewer(palette = "Set1") +
+    ggplot2::scale_colour_brewer(palette = "Set2") +
     ggplot2::theme_minimal()
 }
